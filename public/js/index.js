@@ -14,7 +14,7 @@ function fetchTransactions() {
             data[i].synced = true;
           }
           transactions = data.map(txn => ({ ...txn, synced: true }));
-          localStorage.setItem('budgetTotal', 0);
+          startingTotal = 0;
           populateUi(true);
         })
     })
