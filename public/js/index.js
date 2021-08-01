@@ -2,25 +2,27 @@ let transactions = [];
 let startingTotal = 0;
 let myChart;
 
-fetch("/api/transaction")
-  .then(response => {
-    response.json()
-      .then(function (data) {
-        console.log('transactions', data);
+function fetchTransactions() {
+  fetch("/api/transaction")
+    .then(response => {
+      response.json()
+        .then(function (data) {
+          console.log('transactions', data);
 
-        // store transactions in indexeddb, include `synced = true`
-        for (let i = 0; i < data.length; i++) {
-          data[i].synced = true;
-        }
-        transactions = data.map(txn => ({ ...txn, synced: true }));
-        populateUi(true);
-      })
-  })
-  .catch(err => {
-    // network request failed, try to get it from indexDb
-    startingTotal = parseInt(localStorage.getItem('budgetTotal'));
-    populateUi();
-  });
+          // store transactions in indexeddb, include `synced = true`
+          for (let i = 0; i < data.length; i++) {
+            data[i].synced = true;
+          }
+          transactions = data.map(txn => ({ ...txn, synced: true }));
+          populateUi(true);
+        })
+    })
+    .catch(err => {
+      // network request failed, try to get it from indexDb
+      startingTotal = parseInt(localStorage.getItem('budgetTotal'));
+      populateUi();
+    });
+}
 
 function populateUi(saveTotal = false) {
   populateTotal(saveTotal);
@@ -175,6 +177,8 @@ function sendTransaction(isAdding) {
     });
 }
 
+fetchTransactions();
+
 document.querySelector("#add-btn").onclick = function () {
   sendTransaction(true);
 };
@@ -182,3 +186,5 @@ document.querySelector("#add-btn").onclick = function () {
 document.querySelector("#sub-btn").onclick = function () {
   sendTransaction(false);
 };
+
+window.addEventListener('readytosync', fetchTransactions);

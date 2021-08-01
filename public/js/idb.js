@@ -83,8 +83,10 @@ function idbSyncTransactions() {
         });
 
     } else {
-      // if no pending transactions in indexedDB, just reload to get the latest from the server
-      location.reload();
+      // if no pending transactions in indexedDB, signal the reconnect (after checking for cached transactions)
+      const event = document.createEvent('Event');
+      event.initEvent('readytosync', true, true);
+      window.dispatchEvent(event);
     }
   };
 }
