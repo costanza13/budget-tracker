@@ -4,6 +4,8 @@
 
 Budget Tracker is a progrssive web application built to help travelers keep track of their budget while away from home -- and away from a reliable internet connection.
 
+![budget-tracker](public/images/budget-tracker.png)
+
 ## What does it do?
 
 Budget Tracker provides a simple interface for entering expenses and credits, tracks balance changes from the initial transaction, and displays a chart showing how the balance has changed over time. When used without an internet connection, the app will remember the balance from the last time it was connected to the server, and display changes relative to that balance. Transactions entered while offline are stored in the browser/client's local database (IndexedDB) and sync'ed to the server upon the next successful reconnection. The app can also be installed on a mobile device by using the "Add to Home Screen" option offered by some mobile web browsers.
