@@ -1,31 +1,35 @@
 let db;
 
-const request = indexedDB.open('budget_tracker', 1);
+function idbConnect() {
+  const request = indexedDB.open('budget_tracker', 1);
 
-request.onupgradeneeded = function (event) {
-  // save a reference to the database
-  const db = event.target.result;
-  // create an object store (table) called `transaction`, set it to have an auto incrementing primary key of sorts 
-  db.createObjectStore('budget', { autoIncrement: true });
-};
+  request.onupgradeneeded = function (event) {
+    // save a reference to the database
+    const db = event.target.result;
+    // create an object store (table) called `transaction`, set it to have an auto incrementing primary key of sorts 
+    db.createObjectStore('budget', { autoIncrement: true });
+  };
 
-// upon successful db connection
-request.onsuccess = function (event) {
-  // when db is successfully created with its object store (from onupgradedneeded event above) or simply established a connection, save reference to db in global variable
-  db = event.target.result;
+  request.onerror = function (event) {
+    // log error here
+    console.log(event.target.errorCode);
+  };
 
-  // check if app is online, if yes run syncTransactions() function to send all local db data to api
-  if (navigator.onLine) {
-    syncTransactions();
-  }
-};
+  // upon successful db connection
+  request.onsuccess = function (event) {
+    // when db is successfully created with its object store (from onupgradedneeded event above) or simply established a connection, save reference to db in global variable
+    db = event.target.result;
 
-request.onerror = function (event) {
-  // log error here
-  console.log(event.target.errorCode);
-};
+    // check if app is online, if yes run idbSyncTransactions() function to send all local db data to api
+    if (navigator.onLine) {
+      idbSyncTransactions();
+    }
+  };
 
-function saveRecord(record) {
+  return request;
+}
+
+function idbSaveRecord(record) {
   console.log('saving record in indexedDB', record);
 
   // open a new transaction with the database with read and write permissions 
@@ -38,7 +42,7 @@ function saveRecord(record) {
   budgetObjectStore.add(record);
 }
 
-function syncTransactions() {
+function idbSyncTransactions() {
   // open a transaction on db
   const transaction = db.transaction(['budget'], 'readwrite');
 
@@ -72,6 +76,7 @@ function syncTransactions() {
           budgetObjectStore.clear();
 
           alert('All saved transactions have been submitted!');
+          location.reload();
         })
         .catch(err => {
           console.log(err);
@@ -80,4 +85,6 @@ function syncTransactions() {
   };
 }
 
-window.addEventListener('online', syncTransactions);
+idbConnect();
+
+window.addEventListener('online', idbSyncTransactions);
