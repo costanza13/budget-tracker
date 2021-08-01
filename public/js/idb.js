@@ -81,6 +81,10 @@ function idbSyncTransactions() {
         .catch(err => {
           console.log(err);
         });
+
+    } else {
+      // if no pending transactions in indexedDB, just reload to get the latest from the server
+      location.reload();
     }
   };
 }
