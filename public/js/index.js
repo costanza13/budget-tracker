@@ -3,7 +3,7 @@ let startingTotal = 0;
 let myChart;
 
 function fetchTransactions() {
-  fetch("/api/transaction")
+  fetch('/api/transaction')
     .then(response => {
       response.json()
         .then(function (data) {
@@ -44,23 +44,39 @@ function populateTotal(save = false) {
   total += startingTotal;
   console.log('total', total);
 
-  let totalEl = document.querySelector("#total");
-  totalEl.textContent = total;
+  const totalEl = document.querySelector('#total');
+  const totalLabelEl = document.querySelector('#total-label')
+  totalEl.textContent = '$' + Math.abs(total);
+  if (total < 0) {
+    totalEl.classList.add('negative');
+    totalLabelEl.textContent = 'over budget';
+  } else {
+    totalEl.classList.remove('negative');
+    totalLabelEl.textContent = 'left to spend';
+  }
 }
 
 function populateTable() {
-  let tbody = document.querySelector("#tbody");
-  tbody.innerHTML = "";
+  let tbody = document.querySelector('#tbody');
+  tbody.innerHTML = '';
 
+  let i = 0;
   transactions.forEach(transaction => {
+    const txnDate = Date.parse(transaction.date);
+    const formattedDate = dayjs(txnDate).format('h:mmA<br />M/D/YY') ;
+
+    const isDebit = transaction.value < 0;
+    const txnAmount = isDebit ? '-' + Math.abs(transaction.value) : transaction.value;
+
     // create and populate a table row
-    let tr = document.createElement("tr");
+    let tr = document.createElement('tr');
     tr.innerHTML = `
-      <td>${transaction.name}</td>
-      <td>${transaction.value}</td>
+      <td><div class="txn-name">${transaction.name}</div><div class="txn-date">${formattedDate}</div></td>
+      <td class="amount${isDebit ? ' negative' : ''}">${txnAmount}</td>
     `;
 
     tbody.appendChild(tr);
+    i++;
   });
 }
 
@@ -111,7 +127,7 @@ function populateChart() {
 function sendTransaction(isAdding) {
   let nameEl = document.querySelector("#t-name");
   let amountEl = document.querySelector("#t-amount");
-  let errorEl = document.querySelector(".form .error");
+  let errorEl = document.querySelector(".error");
 
   // validate form
   if (nameEl.value === "" || amountEl.value === "") {

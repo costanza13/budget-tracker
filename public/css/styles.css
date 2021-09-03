@@ -34,18 +34,59 @@ tr:nth-child(even) {
 
 .total {
   font-size: 150%;
-  text-decoration: underline;
+}
+
+#total {
+  color: green;
 }
 
 .form {
-  margin-top: 25px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin: 25px auto;
   width: 100%;
+}
+
+.inputs, .buttons {
+  display: flex;
+  flex-grow: 1;
+  flex-wrap: wrap;
+}
+
+.form-control {
+  display: inline-block;
+  flex-basis: 25%;
+  flex-grow: 1;
+  margin: 2px;
+  white-space: nowrap;
 }
 
 .transactions {
   text-align: left;
-  max-height: 300px;
-  overflow: auto;
+  max-height: 310px;
+  overflow-y: scroll;
   width: 90%;
   margin: 0 auto;
+}
+
+.amount {
+  text-align: right;
+}
+
+th.amount {
+  color: black;
+}
+
+.txn-name {
+  float: left;
+}
+
+.txn-date {
+  text-align: right;
+  font-size: 70%;
+}
+
+.negative {
+  color: red;
 }
